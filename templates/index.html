@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bootstrap Web Page</title>
+    <!-- Add Bootstrap CSS link -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <!-- Heading Tab -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Bootstrap Web Page</a>
+    </nav>
+
+    <!-- First Row -->
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Column 1 -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <button id="button1" onclick="live_stream()"><h5 class="card-title">live detection<h5></button>
+                       <!-- <h5 class="card-title">Column 1</h5> -->
+                        <p class="card-text">Live Detection using webcam,save this output as video format</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 2 -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                       <button id="button2" onclick="upload_video()"><h5  class="card-title">offline detection</h5></button>
+                       <!--<h5 class="card-title">Column 2</h5>-->
+                        <p class="card-text">detection performed by uploading mp4 file </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Second Row -->
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Column 3 -->
+               <div class="card">
+                <div class="card-body">
+                    <h5 id ="heading" class="card-title"></h5>
+                </div>  
+            </div>
+            </div>
+
+            <!-- Column 4 
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Column 4</h5>
+                        <p class="card-text">This is the content of the fourth column.</p>
+                    </div>
+                </div>
+            </div>-->
+        </div>
+    </div>
+    <script>
+        function live_stream()
+     {
+        con1='  <h1>Streaming on...</h1> <div id="imageContainer"></div>'
+        document.getElementById('heading').innerHTML = con1;
+
+        const imageContainer = document.getElementById('imageContainer');
+        const eventSource = new EventSource('/video_feed');
+        eventSource.onmessage = (event) => {
+            const img = document.createElement('img');
+            img.src = event.data;
+            imageContainer.appendChild(img);
+        };
+
+    }
+
+    function upload_video()
+    {
+        con2='<form id="uploadForm"> <input type="file" name="file" id="file"> upload mp4 video <button type="submit">Upload</button> </form><br><div id="response"></div>'
+        document.getElementById('heading').innerHTML = con2;
+
+        const uploadForm = document.getElementById('uploadForm');
+        const responseDiv = document.getElementById('response');
+
+        uploadForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const formData = new FormData(uploadForm);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                responseDiv.textContent = 'Form saved successfully.';
+            })
+            .catch(error => {
+                responseDiv.textContent = 'Error submitting form: ' + error.message;
+            });
+        });
+    }
+        
+    </script>
+
+    <!-- Add Bootstrap JS and jQuery scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  
+</body>
+</html>
